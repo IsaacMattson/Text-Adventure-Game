@@ -59,6 +59,7 @@ end_of_game = False
 starting = True
 trait_picked = False
 
+
 is_WATCH_TOWER_LOCATION_blocked = True
 is_FOREST_PATH_E_LOCATION_blocked = True 
 is_CAVE_LOCATION_blocked =True
@@ -113,12 +114,6 @@ def perform_command(verb, noun):
     else:
         perfrom_start_command(verb)       
         
-def perfrom_debug_command(code):
-    global is_CAVE_LOCATION_blocked
-    #This is for executing code inputed into the entry
-    #can only get it to print not change value
-    exec(code)
-    set_current_state()
 
 def perfrom_start_command(action):
     global trait_picked
@@ -140,7 +135,7 @@ def perfrom_start_command(action):
     
 
 def perform_go_command(direction):
-
+ 
     global current_location
     global refresh_location
     
