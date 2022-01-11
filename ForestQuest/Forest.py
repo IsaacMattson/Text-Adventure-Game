@@ -59,7 +59,6 @@ end_of_game = False
 starting = True
 trait_picked = False
 
-
 is_WATCH_TOWER_LOCATION_blocked = True
 is_FOREST_PATH_E_LOCATION_blocked = True 
 is_CAVE_LOCATION_blocked =True
@@ -76,12 +75,14 @@ dirt_bike_descriptions = {
 
 trait = ''
 brake_pads_object = GameObject.GameObject('Brake Pads',RIVER_CLIFF_LOCATION,True,True,False,'Brake pads for a car, but with a little work you could probably get these to work for any vehicle.')
-chain = GameObject.GameObject('Chain', MINE_A_LOCATION, True, True, False, 'A chain to make wheels spin')
-petrol = GameObject.GameObject('Can of petrol', EXTRA_LOCATION, True, False, False, 'A full can of petrol' )
-dirt_bike = GameObject.GameObject('Dirt bike', CAMP_LOCATION, False,True,False, dirt_bike_descriptions[1])
+chain_object = GameObject.GameObject('Chain', MINE_A_LOCATION, True, True, False, 'A chain to make wheels spin.')
+petrol_object = GameObject.GameObject('Can of petrol', EXTRA_LOCATION, True, False, False, 'A full can of petrol.' )
+dirt_bike_object = GameObject.GameObject('Dirt bike', CAMP_LOCATION, False,True,False, dirt_bike_descriptions[1])
+axe_object = GameObject.GameObject('Axe', CABIN_LOCATION, True, True, False, 'A good quality wood chopping axe.')
+fishing_rod_object = GameObject.GameObject('Fishing rod', FRONT_OF_CABIN_LOCATION, True, True, False, 'A sturdy Fishing rod.')
+fish_object = GameObject.GameObject('Fish', POND_LOCATION, True, False, False, "Its a fish. Probably a Carp or something.")
 
-
-game_objects = [brake_pads_object,chain,petrol,dirt_bike]
+game_objects = [brake_pads_object,chain_object,petrol_object,dirt_bike_object, axe_object, fish_object, fishing_rod_object]
 
 
 
@@ -109,11 +110,90 @@ def perform_command(verb, noun):
             perform_open_command(noun)
         elif (verb == 'DEBUG'):
             perfrom_debug_command(noun)
+        elif (verb == 'USE'):
+            perform_use_command(noun)
+        elif (verb == 'MAKE'):
+            perform_make_command(noun)
+#       elif (verb == 'FISH'):
+#            perform_fish_command(noun)
         else:
             print_to_description("huh?")
     else:
         perfrom_start_command(verb)       
         
+        
+# def perform_fish_command(noun):
+#     global game_objects
+#     
+#     if (not noun == ""):
+#         print_to_description("What?")    
+#     else:
+#         if fishing_rod_object.carried:
+#             
+#             if current_location == POND_LOCATION:
+#                 #fish
+#                 pass
+#             
+#             else:
+#                 print_to_description('You look around, but can not find a area to cast your rod.')
+#         else:
+#             print_to_description('With What?')    
+#             
+        
+def perform_make_command(object):
+    global game_objects
+        
+def perform_use_command(noun):
+    
+    global is_WATCH_TOWER_LOCATION_blocked
+    global is_FOREST_PATH_E_LOCATION_blocked
+    global game_objects
+    game_object = get_game_object(noun)
+    
+    if not (game_object is None):
+        if (game_object.carried == True):        
+            # Goes through the objects that can be used
+            if game_object == axe_object:
+                if current_location == FOREST_PATH_F_LOCATION or current_location == FOREST_PATH_E_LOCATION:
+                    is_FOREST_PATH_E_LOCATION_blocked = False
+                    print_to_description('You chopped the log blocking the path.')
+                
+                elif current_location == FOREST_PATH_C_LOCATION or current_location == WATCH_TOWER_LOCATION:
+                    is_WATCH_TOWER_LOCATION_blocked = False
+                    print_to_description('You chopped the log blocking the path.')
+                                      
+                else:
+                    print_to_description('You look around, and can\'t bring yourself the chop down one of the trees.')
+                    
+            if game_object == fishing_rod_object:
+                
+                if current_location == POND_LOCATION:
+                    #fish
+                    pass
+                elif (current_location == RIVER_BEACH_B_LOCATION) or (current_location == RIVER_BEACH_LOCATION_A) or(current_location == RIVER_BEACH_C_LOCATION) or (current_location == RIVER_CLIFF_LOCATION):
+                    print_to_description('You cast your rod into the water, but get no bite.')
+                    
+                else:
+                    print_to_description('Where?')
+            else:
+                print_to_description('You scratch your head, Trying to figure out how to use {}.'.format(noun.upper()))
+        else:   
+            #if they don't have the item, but it exists
+            print_to_description('You look in your pockets, and fail to locate {}.'.format(noun.upper()))
+            
+    else:        
+        #object dosn't exist
+        print_to_description('What is a(n) {}?'.format(noun))
+        
+        
+        
+def perfrom_debug_command(code):
+    global is_CAVE_LOCATION_blocked
+    global current_location
+    #This is for executing code inputed into the entry
+    #can only get it to print not change value
+    exec(code)
+    global refresh_location
 
 def perfrom_start_command(action):
     global trait_picked
@@ -135,7 +215,7 @@ def perfrom_start_command(action):
     
 
 def perform_go_command(direction):
- 
+
     global current_location
     global refresh_location
     
@@ -311,7 +391,7 @@ def get_location_to_north():
     elif current_location ==RIVER_CLIFF_LOCATION :
         return RIVER_BEACH_B_LOCATION
     elif current_location == WATCH_TOWER_LOCATION:
-        return FOREST_PATH_C_LOCATION
+        return FOREST_PATH_C_LOCATION if is_WATCH_TOWER_LOCATION_blocked == False else 0
     elif current_location == FOREST_PATH_G_LOCATION  :
         return FRONT_OF_CABIN_LOCATION
     
@@ -375,7 +455,7 @@ def get_location_to_east():
     elif current_location == FOREST_PATH_C_LOCATION:
         return FOREST_PATH_D_LOCATION
     elif current_location == FOREST_PATH_E_LOCATION  :
-        return FOREST_PATH_F_LOCATION
+        return FOREST_PATH_F_LOCATION if is_FOREST_PATH_E_LOCATION_blocked == False else 0
     
     elif current_location == FOREST_PATH_D_LOCATION :
         return FRONT_OF_CABIN_LOCATION
@@ -616,7 +696,6 @@ def set_directions_to_move():
 def main():
     
     build_interface()
-#    print(type(description_widget))
     set_current_state()
     root.mainloop()    
 

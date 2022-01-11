@@ -7,3 +7,11 @@ class GameObject:
         self.visible = visible
         self.carried = carried
         self.description  = description
+
+class Location:
+    
+    def __init_(self, name, description, value, image):
+        self.name = name
+        self.description = description
+        self.value = value
+        self.image = image
