@@ -65,6 +65,10 @@ is_CAVE_LOCATION_blocked =True
 is_MINE_B_LOCATION_blocked = True
 is_FLOWER_FIELD_LOCATION_blocked = True
 
+is_petrol_done = False
+is_brakes_done = False
+is_chain_done = False
+
 dirt_bike_descriptions = {
     1: 'It\'s a broken dirt bike, and with a closer look, you can see that it\'s tank is empty and has no chain. You have a feeling that something else is wrong, but you cant put your finger on it...',
     2: 'It\'s a Broken dirt bike with an empty tank, no chain, and broken brakes',
@@ -76,11 +80,12 @@ dirt_bike_descriptions = {
 trait = ''
 brake_pads_object = GameObject.GameObject('Brake Pads',RIVER_CLIFF_LOCATION,True,True,False,'Brake pads for a car, but with a little work you could probably get these to work for any vehicle.')
 chain_object = GameObject.GameObject('Chain', MINE_A_LOCATION, True, True, False, 'A chain to make wheels spin.')
-petrol_object = GameObject.GameObject('Can of petrol', EXTRA_LOCATION, True, False, False, 'A full can of petrol.' )
+petrol_object = GameObject.GameObject('Can of petrol', 11, True, True, False, 'A full can of petrol.' )
 dirt_bike_object = GameObject.GameObject('Dirt bike', CAMP_LOCATION, False,True,False, dirt_bike_descriptions[1])
 axe_object = GameObject.GameObject('Axe', CABIN_LOCATION, True, True, False, 'A good quality wood chopping axe.')
 fishing_rod_object = GameObject.GameObject('Fishing rod', FRONT_OF_CABIN_LOCATION, True, True, False, 'A sturdy Fishing rod.')
 fish_object = GameObject.GameObject('Fish', POND_LOCATION, True, False, False, "Its a fish. Probably a Carp or something.")
+mech_book_object = GameObject.GameObject('Mechanic book', 24, True, True, False, 'Its a book on all sorts of basic repairs and maintenance of Vehicles.')
 
 game_objects = [brake_pads_object,chain_object,petrol_object,dirt_bike_object, axe_object, fish_object, fishing_rod_object]
 
@@ -114,31 +119,25 @@ def perform_command(verb, noun):
             perform_use_command(noun)
         elif (verb == 'MAKE'):
             perform_make_command(noun)
-#       elif (verb == 'FISH'):
-#            perform_fish_command(noun)
+
         else:
             print_to_description("huh?")
     else:
         perfrom_start_command(verb)       
         
         
-# def perform_fish_command(noun):
-#     global game_objects
-#     
-#     if (not noun == ""):
-#         print_to_description("What?")    
-#     else:
-#         if fishing_rod_object.carried:
-#             
-#             if current_location == POND_LOCATION:
-#                 #fish
-#                 pass
-#             
-#             else:
-#                 print_to_description('You look around, but can not find a area to cast your rod.')
-#         else:
-#             print_to_description('With What?')    
-#             
+
+def perform_fix_command(item):
+    game_object = get_game_object(item)
+    
+    if not(game_object == brake_pads_object, game_object == petrol_object, game_object == chain_object):
+        print_to_description('How?')
+    else:
+        if game_object == petrol_object:
+            is_petrol_done = True
+            "You Filled the "
+        
+        
         
 def perform_make_command(object):
     global game_objects
@@ -147,45 +146,54 @@ def perform_use_command(noun):
     
     global is_WATCH_TOWER_LOCATION_blocked
     global is_FOREST_PATH_E_LOCATION_blocked
+    global is_FLOWER_FIELD_LOCATION_blocked
     global game_objects
     game_object = get_game_object(noun)
     
     if not (game_object is None):
-        if (game_object.carried == True):        
+        if (game_object.carried == True):         
             # Goes through the objects that can be used
             if game_object == axe_object:
-                if current_location == FOREST_PATH_F_LOCATION or current_location == FOREST_PATH_E_LOCATION:
+                #This needs to be fixed later
+                if current_location == FOREST_PATH_F_LOCATION or current_location == FOREST_PATH_E_LOCATION and is_FOREST_PATH_E_LOCATION_blocked == True:
                     is_FOREST_PATH_E_LOCATION_blocked = False
                     print_to_description('You chopped the log blocking the path.')
                 
-                elif current_location == FOREST_PATH_C_LOCATION or current_location == WATCH_TOWER_LOCATION:
+                elif current_location == FOREST_PATH_C_LOCATION or current_location == WATCH_TOWER_LOCATION and is_WATCH_TOWER_LOCATION_blocked == True:
                     is_WATCH_TOWER_LOCATION_blocked = False
                     print_to_description('You chopped the log blocking the path.')
                                       
+                elif current_location == FOREST_PATH_G_LOCATION and is_FLOWER_FIELD_LOCATION_blocked == True:
+                    is_FLOWER_FIELD_LOCATION_blocked = False
+                    print_to_description('You chopped the log blocking the path.')
                 else:
-                    print_to_description('You look around, and can\'t bring yourself the chop down one of the trees.')
+                    print_to_description('The trees around you look far to Strong to be chopped down.')
                     
-            if game_object == fishing_rod_object:
+            elif game_object == fishing_rod_object:
                 
                 if current_location == POND_LOCATION:
                     #fish
                     pass
+                
                 elif (current_location == RIVER_BEACH_B_LOCATION) or (current_location == RIVER_BEACH_LOCATION_A) or(current_location == RIVER_BEACH_C_LOCATION) or (current_location == RIVER_CLIFF_LOCATION):
                     print_to_description('You cast your rod into the water, but get no bite.')
                     
                 else:
                     print_to_description('Where?')
+                    
             else:
                 print_to_description('You scratch your head, Trying to figure out how to use {}.'.format(noun.upper()))
+                
         else:   
             #if they don't have the item, but it exists
             print_to_description('You look in your pockets, and fail to locate {}.'.format(noun.upper()))
             
     else:        
         #object dosn't exist
-        print_to_description('What is a(n) {}?'.format(noun))
+        print_to_description('What is a(n) {}?'.format(noun.upper))
         
         
+     
         
 def perfrom_debug_command(code):
     global is_CAVE_LOCATION_blocked
