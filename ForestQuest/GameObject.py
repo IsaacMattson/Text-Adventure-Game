@@ -10,8 +10,7 @@ class GameObject:
 
 class Location:
     
-    def __init_(self, name, description, value, image):
-        self.name = name
-        self.description = description
+    def __init__(self,value, description = 'Null', image = 'res/Title.gif'):
         self.value = value
+        self.description = description     
         self.image = image
