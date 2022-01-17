@@ -59,6 +59,9 @@ end_of_game = False
 starting = True
 trait_picked = False
 
+is_bat_gone = False
+is_stirfry_given = False
+
 is_WATCH_TOWER_LOCATION_blocked = True
 is_FOREST_PATH_E_LOCATION_blocked = True 
 is_CAVE_LOCATION_blocked =True
@@ -81,14 +84,14 @@ trait = ''
 brake_pads_object = GameObject.GameObject('Brake Pads',RIVER_CLIFF_LOCATION,True,True,False,'Brake pads for a car, but with a little work you could probably get these to work for any vehicle.')
 chain_object = GameObject.GameObject('Chain', MINE_A_LOCATION, True, True, False, 'A chain to make wheels spin.')
 petrol_object = GameObject.GameObject('Petrol', 24, True, True, False, 'A full can of petrol.' )
-
+berries_object = GameObject.GameObject('Berries', FOREST_PATH_END_LOCATION, True, True, False, 'A handful of berries.')
 axe_object = GameObject.GameObject('Axe', CABIN_LOCATION, True, True, False, 'A good quality wood chopping axe.')
 fishing_rod_object = GameObject.GameObject('Fishing rod', FRONT_OF_CABIN_LOCATION, True, True, False, 'A sturdy Fishing rod.')
 fish_object = GameObject.GameObject('Fish', POND_LOCATION, True, False, False, "Its a fish. Probably a Carp or something.")
 mech_book_object = GameObject.GameObject('Mechanic book', 24, True, True, False, 'Its a book on all sorts of basic repairs and maintenance of Vehicles.')
 dirt_bike_object = GameObject.GameObject('Dirt bike', CAMP_LOCATION, False,True,False, dirt_bike_descriptions[1])
 
-game_objects = [brake_pads_object,chain_object,petrol_object,dirt_bike_object, axe_object, fish_object, fishing_rod_object]
+game_objects = [brake_pads_object,chain_object,petrol_object,dirt_bike_object, axe_object, fish_object, fishing_rod_object, berries_object]
 
 
 
@@ -122,12 +125,39 @@ def perform_command(verb, noun):
             perform_make_command(noun)
         elif (verb == 'FIX'):
             perform_fix_command(noun)
+        elif (verb == 'TALK'):
+            perform_talk_command(noun)
         else:   
             print_to_description("huh?")
     else:
         perfrom_start_command(verb)       
         
+
+
         
+def perform_talk_command(person):   
+    global is_CAVE_LOCATION_blocked
+    global is_bat_gone
+         
+    if person == 'BAT' and is_bat_gone == False and current_location == CAVE_ENTRY_LOCATION and not berries_object.carried:
+        #tests if in right location
+        ptd('Bat : "You know, I could really go for a snake right now."')
+        
+    elif person == 'BAT' and is_bat_gone == False and current_location == CAVE_ENTRY_LOCATION and berries_object.carried:
+        ptd('Bat : "Hey, these look delicious, Thanks"\nThe bat flys away, effortlessly carrying away the bolder under it.')
+        is_CAVE_LOCATION_blocked = False
+        
+    elif person == 'TORTISE' and current_location == WATCH_TOWER_LOCATION and is_stirfry_given == False:
+        #tests if in right location
+        pass
+    
+    else:
+        #if the person doesn't exist 
+        ptd('Who?')
+    
+    
+    
+    
 
 def perform_fix_command(item):
     game_object = get_game_object(item)
@@ -221,10 +251,7 @@ def perform_use_command(noun):
     else:        
         #object dosn't exist
         print_to_description('What is a(n) {}?'.format(noun.upper))
-        
-        
-     
-        
+       
 def perfrom_debug_command(code):
     global is_CAVE_LOCATION_blocked
     global current_location
@@ -251,7 +278,6 @@ def perfrom_start_command(action):
     else:
             print_to_description('you may need to "start" first.')
     
-
 def perform_go_command(direction):
 
     global current_location
@@ -298,7 +324,6 @@ def perform_get_command(object_name):
     else:
         print_to_description("You don't see one of those here!")
 
-# 
 def perform_put_command(object_name):
 
     global refresh_objects_visible
@@ -400,15 +425,15 @@ def set_current_image():
     if (current_location == TITLE_LOCATION):
         image_label.img = PhotoImage(file = 'res/Title.gif')
     elif (current_location == CABIN_LOCATION):
-        image_label.img = PhotoImage(file = 'res/blank-1.gif')
+        image_label.img = PhotoImage(file = 'res/Cabin.gif')
+    elif (current_location == RIVER_BEACH_B_LOCATION or current_location == RIVER_BEACH_C_LOCATION or current_location ==  RIVER_BEACH_LOCATION_A ):
+        image_label.img = PhotoImage(file = 'res/Beach.gif')
+        
     else:
         image_label.img = PhotoImage(file = 'res/blank-1.gif')
         
     image_label.config(image = image_label.img)
         
-        
-
-
 def get_location_to_north():
     if current_location == MINE_B_LOCATION :
         return MINE_A_LOCATION   #puzzle
