@@ -6,6 +6,7 @@ from tkinter import font
 
 import GameObject
 
+#make fishing work, add ability to get chain and brakes with tools
 
 TITLE_LOCATION = 0
 MINE_A_LOCATION = 1
@@ -94,14 +95,19 @@ mech_book_object = GameObject.GameObject('Mechanic book', CABIN_LOCATION, True, 
 dirt_bike_object = GameObject.GameObject('Dirt bike', CAMP_LOCATION, False,True,False, dirt_bike_descriptions[1])
 bookshelf_object = GameObject.GameObject('Bookshelf', CABIN_LOCATION, False, True, False, 'Its a basic wooden book shelf with a few books scattered about.')
 cook_book_object = GameObject.GameObject('Cook book', CABIN_LOCATION, True, False, False, 'A book with a all sorts of basic recipes in it. Probably Useful for cooking anything.')
-wood_stove = GameObject.GameObject('Wood Stove', CABIN_LOCATION, False, True, False, 'Its a slightly rusted stove, looks like it need wood to work.')
-shrimp = GameObject.GameObject('Shrimp', RIVER_BEACH_B_LOCATION, False, True, False, 'A hand full of river shrimp caught in a trap.')
-shrimp_stirfry = GameObject.GameObject('Shrimp', CABIN_LOCATION, False, True, False, 'A Classic.')
-golden_flower_a = GameObject.GameObject('Golden Flower', FLOWER_FIELD_LOCATION, True, True, False, 'looks very shiny in the sun.')
-golden_leaf = GameObject.GameObject('Golden leaf', FLOWER_FIELD_LOCATION, True, True, False, 'looks very shiny in the sun.')
-rice_object = GameObject.GameObject('Rice', )
+wood_stove_object = GameObject.GameObject('Wood Stove', CABIN_LOCATION, False, True, False, 'Its a slightly rusted stove, looks like it need wood to work.')
+shrimp_object = GameObject.GameObject('Shrimp', RIVER_BEACH_B_LOCATION, False, True, False, 'A hand full of river shrimp caught in a trap.')
+shrimp_stirfry_object = GameObject.GameObject('Shrimp Stirfry', CABIN_LOCATION, True, False, False, 'A Classic.')
+golden_flower_a_object = GameObject.GameObject('Golden Flower', FLOWER_FIELD_LOCATION, True, True, False, 'looks very shiny in the sun.')
+golden_leaf_object = GameObject.GameObject('Golden leaf', FLOWER_FIELD_LOCATION, True, True, False, 'looks very shiny in the sun.')
+rice_object = GameObject.GameObject('Rice', WATCH_TOWER_LOCATION, True, False, False, 'A package of instant rice' )
+mouse_shop = GameObject.GameObject('Mouse', WATCH_TOWER_LOCATION, False, True, False, 'You see a sign next to the mouse at his stand\n[Rice ====== 1 shiny thing]\n[Petrol ==== 1 shiny thing]' )
+tools_object = GameObject.GameObject('Tools', RIVER_BEACH_C_LOCATION, True, False, True, 'A box of standered tools, good for fixing things.')
 
-game_objects = [brake_pads_object,chain_object,petrol_object,dirt_bike_object, axe_object, fish_object, fishing_rod_object, berries_object, mech_book_object,bookshelf_object, cook_book_object]
+game_objects = [brake_pads_object, chain_object,petrol_object, dirt_bike_object, axe_object, fish_object,
+                fishing_rod_object, berries_object, mech_book_object, bookshelf_object, cook_book_object,
+                 golden_leaf_object, golden_flower_a_object, rice_object, wood_stove_object, shrimp_object,
+                 shrimp_stirfry_object, mouse_shop]
 
 
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX = False
@@ -137,6 +143,8 @@ def perform_command(verb, noun):
             perform_fix_command(noun)
         elif (verb == 'TALK'):
             perform_talk_command(noun)
+        elif (verb == 'BUY'):
+            perform_buy_command(noun)
         else:   
             print_to_description("huh?")
     else:
@@ -145,15 +153,50 @@ def perform_command(verb, noun):
 
 def perform_buy_command(item):
     game_object = get_game_object(item)
+    global rice_object
+    global petrol_object
+    global golden_flower_a_object
+    global golden_leaf_object
     
-    if game_object == petrol_object:
-        pass
-    elif game_object == rice_ob
+   
+    if current_location == WATCH_TOWER_LOCATION:
+        if golden_flower_a_object.carried:
+            if game_object == petrol_object:
+                game_object.carried = True
+                golden_flower_a_object.carried = False
+            
+             
+            elif game_object == rice_object:
+                game_object.carried = True
+                golden_flower_a_object.carried = False
+                
+            else:
+                ptd('What?')
+            
+        elif golden_leaf_object.carried:
+            if game_object == petrol_object:
+                game_object.carried = True
+                golden_leaf_object.carried = False
+            
+             
+            elif game_object == rice_object:
+                game_object.carried = True
+                golden_leaf_object.carried = False
+            
+            else:
+                ptd('What?')
+        
+        else: 
+            ptd('You can\'t Afford that!')   
+    else:
+        ptd('Where?')    
+        
         
 def perform_talk_command(person):   
     global is_CAVE_LOCATION_blocked
     global is_bat_gone
     global know_about_berries
+    know_about_stirfry =False
          
     if person == 'BAT' and is_bat_gone == False and current_location == CAVE_ENTRY_LOCATION and not berries_object.carried:
         
@@ -164,18 +207,21 @@ def perform_talk_command(person):
         if know_about_berries:
             ptd('Bat : "Hey, these look delicious, Thanks"\nThe bat flys away, effortlessly carrying away the bolder under it.')
             is_CAVE_LOCATION_blocked = False
+            berries_object.carried = False
         else:
             ptd('Bat : "You know, I could really go for a snake right now."')
             know_about_berries = True
             
-    elif person == 'TORTISE' and current_location == WATCH_TOWER_LOCATION and is_stirfry_given == False:
-        #tests if in right location
-        pass
-    
-    elif person == 'MOUSE' and  current_location == WATCH_TOWER_LOCATION:
-        ptd('"\'ello there Mate! You want cool thing? I sell you Cool thing if you give me shiny thing."')
-        ptd('There is a sign that says; \n[Petrol === 1 shiny thing]\n[rice ======= 1 shiny thing]')
-    
+    elif person == 'PIRATE TURTLE' and current_location == RIVER_BEACH_C_LOCATION and is_stirfry_given == False:
+        if shrimp_stirfry_object.carried and know_about_stirfry:
+            pass
+            #extange
+        elif shrimp_stirfry_object.carried == False:
+            ptd('"Arrr matey, You know what really helps me sail the Seven seas? A Warm plate of Shrimp Stir fry. Too bad I haven\'t caught any shrimp in forever"')
+            know_about_stirfry = True
+        elif shrimp_stirfry_object.carried and know_about_stirfry == False:
+            ptd('"Arrr matey, You know what really helps me sail the Seven seas? A Warm plate of Shrimp Stir fry. Too bad I haven\'t caught any shrimp in forever"')
+            know_about_stirfry = True
     else:
         #if the person doesn't exist 
         ptd('Who?')
@@ -226,6 +272,19 @@ def perform_fix_command(item):
         
 def perform_make_command(object):
     global game_objects
+    game_object = get_game_object(object)
+    
+    if game_object == shrimp_stirfry_object:
+        if current_location == CABIN_LOCATION and shrimp_object.carried and rice_object.carried:
+            #makes thing
+            shrimp_stirfry_object.carried
+            rice_object.carried = False
+            shrimp_object.carried = False
+            
+        else:
+            ptd('Your missing something...')
+    else:
+        ptd('You Can\'t make that!')
         
 def perform_use_command(noun):
     
