@@ -96,7 +96,7 @@ dirt_bike_object = GameObject.GameObject('Dirt bike', CAMP_LOCATION, False,True,
 bookshelf_object = GameObject.GameObject('Bookshelf', CABIN_LOCATION, False, True, False, 'Its a basic wooden book shelf with a few books scattered about.')
 cook_book_object = GameObject.GameObject('Cook book', CABIN_LOCATION, True, False, False, 'A book with a all sorts of basic recipes in it. Probably Useful for cooking anything.')
 wood_stove_object = GameObject.GameObject('Wood Stove', CABIN_LOCATION, False, True, False, 'Its a slightly rusted stove, looks like it need wood to work.')
-shrimp_object = GameObject.GameObject('Shrimp', RIVER_BEACH_B_LOCATION, False, True, False, 'A hand full of river shrimp caught in a trap.')
+shrimp_object = GameObject.GameObject('Shrimp', RIVER_BEACH_B_LOCATION, True, False, False, 'A hand full of river shrimp caught in a trap.')
 shrimp_stirfry_object = GameObject.GameObject('Shrimp Stirfry', CABIN_LOCATION, True, False, False, 'A Classic.')
 golden_flower_a_object = GameObject.GameObject('Golden Flower', FLOWER_FIELD_LOCATION, True, True, False, 'looks very shiny in the sun.')
 golden_leaf_object = GameObject.GameObject('Golden leaf', FLOWER_FIELD_LOCATION, True, True, False, 'looks very shiny in the sun.')
@@ -196,7 +196,8 @@ def perform_talk_command(person):
     global is_CAVE_LOCATION_blocked
     global is_bat_gone
     global know_about_berries
-    know_about_stirfry =False
+    know_about_stirfry = True
+    global is_stirfry_given
          
     if person == 'BAT' and is_bat_gone == False and current_location == CAVE_ENTRY_LOCATION and not berries_object.carried:
         
@@ -213,13 +214,11 @@ def perform_talk_command(person):
             know_about_berries = True
             
     elif person == 'PIRATE TURTLE' and current_location == RIVER_BEACH_C_LOCATION and is_stirfry_given == False:
-        if shrimp_stirfry_object.carried and know_about_stirfry:
-            pass
-            #extange
-        elif shrimp_stirfry_object.carried == False:
-            ptd('"Arrr matey, You know what really helps me sail the Seven seas? A Warm plate of Shrimp Stir fry. Too bad I haven\'t caught any shrimp in forever"')
-            know_about_stirfry = True
-        elif shrimp_stirfry_object.carried and know_about_stirfry == False:
+        if shrimp_stirfry_object.carried and know_about_stirfry == True:
+            shrimp_stirfry_object.carried = False
+            tools_object.carried = True
+            ('"Arrr, Thanks matey!"')
+        else:
             ptd('"Arrr matey, You know what really helps me sail the Seven seas? A Warm plate of Shrimp Stir fry. Too bad I haven\'t caught any shrimp in forever"')
             know_about_stirfry = True
     else:
@@ -277,7 +276,7 @@ def perform_make_command(object):
     if game_object == shrimp_stirfry_object:
         if current_location == CABIN_LOCATION and shrimp_object.carried and rice_object.carried:
             #makes thing
-            shrimp_stirfry_object.carried
+            shrimp_stirfry_object.carried = True
             rice_object.carried = False
             shrimp_object.carried = False
             
@@ -316,12 +315,24 @@ def perform_use_command(noun):
             elif game_object == fishing_rod_object:
                 
                 if current_location == POND_LOCATION:
-                    #fish
-                    pass
+                    #fish carp
+                    global fish_object
+                    
+                    if not fish_object.carried:
+                        fish_object.carried = True
+                        ptd('After some time, you feel a fish pull on you bob and reel it in')
+                    else:
+                        ptd('You cast you rod, but get no catch.')
                 
                 elif (current_location == RIVER_BEACH_B_LOCATION) or (current_location == RIVER_BEACH_LOCATION_A) or(current_location == RIVER_BEACH_C_LOCATION) or (current_location == RIVER_CLIFF_LOCATION):
-                    print_to_description('You cast your rod into the water, but get no bite.')
+                    #fish shrimp
+                    global shrimp_object
                     
+                    if not shrimp_object.carried:
+                        shrimp_object.carried = True
+                        ptd('You cast your rod into the river, and it catches on a small net trap with a few shrimp caught in it.')
+                    else:
+                        ptd('You cast you rod, but get no catch.')
                 else:
                     print_to_description('Where?')
                     
