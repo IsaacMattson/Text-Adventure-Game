@@ -351,9 +351,53 @@ def perform_open_command(object_name):
 def describe_current_location():
         
     if (current_location == TITLE_LOCATION):
-        print_to_description("")
+        print_to_description("0")
+    elif (current_location == MINE_A_LOCATION):
+        print_to_description("1")
+    elif (current_location == CAVE_LOCATION):
+        print_to_description("2")
+    elif (current_location == MINE_B_LOCATION):
+        print_to_description("3")
+    elif (current_location == CAVE_ENTRY_LOCATION):
+        print_to_description("4")
+    elif (current_location == MINE_C_LOCATION):
+        print_to_description("5")
+    elif (current_location == POND_LOCATION):
+        print_to_description("6")
+    elif (current_location == RIVER_BEACH_LOCATION_A):
+        print_to_description("7")
+    elif (current_location == FOREST_PATH_A_LOCATION):
+        print_to_description("8")
+    elif (current_location == RIVER_BEACH_B_LOCATION):
+        print_to_description("9")
+    elif (current_location == FOREST_PATH_B_LOCATION):
+        print_to_description("10")
+    elif (current_location == FOREST_PATH_C_LOCATION):
+        print_to_description("11")
+    elif (current_location == FOREST_PATH_D_LOCATION):
+        print_to_description("12")
+    elif (current_location == FRONT_OF_CABIN_LOCATION):
+        print_to_description("13")
     elif (current_location == CABIN_LOCATION):
-        print_to_description("You are in a small, basic log cabin with a bed, a tiny kitchen, and a couple other living items. It pretty cold without the stove going. ")
+        print_to_description("14")
+    elif (current_location == RIVER_CLIFF_LOCATION):
+        print_to_description("15")
+    elif (current_location == WATCH_TOWER_LOCATION):
+        print_to_description("16")
+    elif (current_location == RIVER_BEACH_C_LOCATION):
+        print_to_description("17")
+    elif (current_location == FOREST_PATH_E_LOCATION):
+        print_to_description("18")
+    elif (current_location == FOREST_PATH_F_LOCATION):
+        print_to_description("19")
+    elif (current_location == FOREST_PATH_G_LOCATION):
+        print_to_description("20")
+    elif (current_location == FLOWER_FIELD_LOCATION):
+        print_to_description("21")
+    elif (current_location == CAMP_LOCATION):
+        print_to_description("22")
+    elif (current_location == FOREST_PATH_END_LOCATION):
+        print_to_description("23")
     else:
         print_to_description( current_location)
 
@@ -361,8 +405,14 @@ def set_current_image():
     
     if (current_location == TITLE_LOCATION):
         image_label.img = PhotoImage(file = 'res/Title.gif')
-    elif (current_location == CABIN_LOCATION):
+    elif (current_location == MINE_A_LOCATION):
         image_label.img = PhotoImage(file = 'res/blank-1.gif')
+    elif (current_location == CAVE_LOCATION):
+        image_label.img = PhotoImage(file = 'res/blank-2.gif')
+    elif (current_location == MINE_B_LOCATION):
+        image_label.img = PhotoImage(file = 'res/blank-3.gif')
+    elif (current_location == CAVE_ENTRY_LOCATION):
+        image_label.img = PhotoImage(file = 'res/blank-4.gif')
     else:
         image_label.img = PhotoImage(file = 'res/blank-1.gif')
         
